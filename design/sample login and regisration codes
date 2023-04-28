@@ -1,0 +1,83 @@
+Registration codes
+
+
+<?php
+
+if (isset($_POST['submit'])) {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['pass'];
+    $confirm_password = $_POST['c_pass'];
+
+    // Validate input data
+    if (empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
+        echo "<script>alert('All fields are required')</script>";
+    } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Invalid email format')</script>";
+    } else if (strlen($password) < 6) {
+        echo "<script>alert('Password should be at least 6 characters long')</script>";
+    } else if ($password !== $confirm_password) {
+        echo "<script>alert('Password and Confirm Password do not match')</script>";
+    } else {
+        // Save data to database or do other operations
+        // ...
+        echo "<script>alert('Registration successful')</script>";
+    }
+}
+
+?>
+
+
+
+login PHP codes
+
+
+
+
+<?php
+// Start a session
+session_start();
+
+// Check if the form has been submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  // Get the email and password from the form
+  $email = $_POST["email"];
+  $password = $_POST["pass"];
+
+  // TODO: Validate email and password
+
+  // Connect to the database
+  $servername = "localhost";
+  $username = "username";
+  $password = "password";
+  $dbname = "myDB";
+
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Check connection
+  if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+  }
+
+  // Prepare the SQL query
+  $sql = "SELECT * FROM users WHERE email='$email' AND password='$password'";
+
+  // Execute the query
+  $result = $conn->query($sql);
+
+  // Check if there is a user with that email and password
+  if ($result->num_rows == 1) {
+    // Log the user in
+    $_SESSION["email"] = $email;
+    header("Location: dashboard.php"); // Redirect to the dashboard page
+    exit();
+  } else {
+    // Show an error message
+    echo "Invalid email or password.";
+  }
+
+  // Close the database connection
+  $conn->close();
+}
+?>
